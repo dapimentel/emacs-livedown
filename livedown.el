@@ -13,6 +13,11 @@
 
 ;;; Code:
 
+(defcustom inc-variable 0
+  "Port number increment."
+  :type 'integer
+  :group 'livedown)
+
 (defgroup livedown nil
   "Realtime Markdown previews"
   :group 'livedown
@@ -43,19 +48,33 @@
     "Preview the current file in livedown."
     (interactive)
 
-   (call-process-shell-command
-             (format "livedown stop --port %s &"
-                            livedown-port))
+    ;; stop livedown on port
+    (call-process-shell-command
+     (format "livedown stop --port %s &"
+             (+ livedown-port inc-variable)))
 
-        (start-process-shell-command
-            (format "emacs-livedown")
-            (format "emacs-livedown-buffer")
-            (format "livedown start '%s' --port %s %s %s "
-                            buffer-file-name
-                            livedown-port
-                            (if livedown-browser (concat "--browser " livedown-browser) "")
-                            (if livedown-open "--open" "")))
-        (print (format "%s rendered @ %s" buffer-file-name livedown-port) (get-buffer "emacs-livedown-buffer")))
+    ;; run livedown on port
+    (start-process-shell-command
+     (format "emacs-livedown")
+     (format "emacs-livedown-buffer")
+     (format "livedown start '%s' --port %s %s %s "
+             buffer-file-name
+             (+ livedown-port inc-variable)
+             (if livedown-browser (concat "--browser " livedown-browser) "")
+             (if livedown-open "--open" "")))
+
+    ;; echo the commands in the emacs-livedown-buffer
+    (print (format "+ livedown stop --port %s &"
+             (+ livedown-port inc-variable))
+           (get-buffer "emacs-livedown-buffer"))
+    (print (format "+ livedown start '%s' --port %s %s %s "
+             buffer-file-name
+             (+ livedown-port inc-variable)
+             (if livedown-browser (concat "--browser " livedown-browser) "")
+             (if livedown-open "--open" ""))
+           (get-buffer "emacs-livedown-buffer"))
+    (setq inc-variable (+ inc-variable 1))
+    )
 
 ;;;###autoload
 (defun livedown-kill (&optional async)
