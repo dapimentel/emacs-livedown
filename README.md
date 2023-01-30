@@ -55,7 +55,11 @@ For additional bonus points, open the preview using the browser with custom comm
 (custom-set-variables
  '(livedown-browser "'firefox -P livedown --private-window'"))  ; browser to use with custom options
 ```
-
+or
+```
+(custom-set-variables
+ '(livedown-browser "'google-chrome --window-size=\"1000,1600\" --window-position=\"1920,0\" --incognito --user-data-dir=$HOME/.config/google-chrome-alternate --password-store=basic'"))  ; browser to use with custom options
+```
 
 ## License
 
